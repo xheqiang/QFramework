@@ -12,6 +12,7 @@
  */
 class View
 {
+    protected $viewDir = "View";
     protected $variables = array();
     protected $_controller;
     protected $_action;
@@ -22,43 +23,40 @@ class View
         $this->_action = $action;
     }
 
-    // 分配变量
+    /**
+     * 控制器变量分配
+     *
+     * @param $name
+     * @param $value
+     */
     public function assign($name, $value)
     {
         $this->variables[$name] = $value;
     }
 
-    // 渲染显示
-    public function render()
+    /**
+     * 输出数据到视图方法
+     *
+     * @param null $dir
+     * @param null $file
+     */
+    public function display($templet = null)
     {
-        /*extract($this->variables);
-        $defaultHeader = APP_PATH . 'application/views/header.php';
-        $defaultFooter = APP_PATH . 'application/views/footer.php';
-        $defaultLayout = APP_PATH . 'application/views/layout.php';
+        extract($this->variables);  //将数组键名作为变量名，使用数组键值作为变量值，便于在视图中使用
+        $viewDir = $this->viewDir;
+        $viewBasePath = APP_PATH. DIR_SEPARATOR . APP_NAME . DIR_SEPARATOR . $viewDir . DIR_SEPARATOR;
+        $viewDir = $this->_controller . DIR_SEPARATOR;
+        $viewName = $this->_action . ".phtml";
 
-        $controllerHeader = APP_PATH . 'application/views/' . $this->_controller . '/header.php';
-        $controllerFooter = APP_PATH . 'application/views/' . $this->_controller . '/footer.php';
-        $controllerLayout = APP_PATH . 'application/views/' . $this->_controller . '/' . $this->_action . '.php';
+        $defaultTemplate = $viewBasePath . $viewDir . $viewName; //默认模板
+        $transmitTemplate = $viewBasePath . $templet;
 
-        // 页头文件
-        if (file_exists($controllerHeader)) {
-            include ($controllerHeader);
-        } else {
-            include ($defaultHeader);
+        $templetFile = !empty($templet) ? $transmitTemplate : $defaultTemplate;
+
+        if (file_exists($templetFile)) {
+            include_once ($templetFile);
+        }else{
+            echo "<h3>Warning:Please check whether the view file exists</h3>";
         }
-
-        // 页内容文件
-        if (file_exists($controllerLayout)) {
-            include ($controllerLayout);
-        } else {
-            include ($defaultLayout);
-        }
-
-        // 页脚文件
-        if (file_exists($controllerFooter)) {
-            include ($controllerFooter);
-        } else {
-            include ($defaultFooter);
-        }*/
     }
 }

@@ -11,7 +11,9 @@ class IndexController extends Controller
 
     public function indexAction($param = "")
     {
-        print_r($param);
+        $data["id"] = array(123,456);
+        $this->assign("list", $data);
+        $this->display();
     }
 
 }

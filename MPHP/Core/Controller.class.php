@@ -31,8 +31,8 @@ class Controller
     }
 
     // 渲染视图
-    public function render()
+    public function display()
     {
-        $this->_view->render();
+        $this->_view->display();
     }
 }
