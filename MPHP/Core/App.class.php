@@ -68,7 +68,8 @@ class App
 
         $dispatch = new $controller($controllerName, $action);
         //init中已经判断控制器和动作存在，这里调用并传入url参数
-        call_user_func_array(array($dispatch, $action), $param);
+        $dispatch->$action($param);
+        //call_user_func_array(array($dispatch, $action), $param);
     }
 
     public static function getController()

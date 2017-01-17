@@ -11,7 +11,7 @@ class IndexController extends Controller
 
     public function indexAction($param = "")
     {
-        echo $param["id"];
+        print_r($param);
     }
 
 }

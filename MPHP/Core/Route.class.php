@@ -57,8 +57,28 @@ class Route
 
             // 获取URL参数
             array_shift($urlArray);
-            $this->_params = $urlArray ? $urlArray : array();
+            $this->_params = self::paseParams($urlArray);
         }
+    }
+
+    /**
+     * 获取参数名称
+     *
+     * @return array
+     */
+    public static function paseParams($urlArray)
+    {
+        $paramArray = array();
+        $num = count($urlArray);
+        if($num > 0){
+            if($num % 2 == 0) {
+                //将参数进行处理
+                for ($i = 0; $i < $num; $i += 2) {
+                    $paramArray[$urlArray[$i]] = $urlArray[$i + 1];
+                }
+            }
+        }
+        return $paramArray;
     }
 
     /**
