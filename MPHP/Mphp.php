@@ -26,6 +26,7 @@ class Mphp {
         spl_autoload_register ( array ($this, 'core' ) );
         spl_autoload_register ( array ($this, 'controller' ) );
         spl_autoload_register ( array ($this, 'model' ) );
+        self::config();    //TODO 引入配置文件，暂时通过该方法实现，之后优化
     }
 
     public function core($class) {
@@ -44,6 +45,11 @@ class Mphp {
         set_include_path ( get_include_path () . PATH_SEPARATOR . APP_PATH. DIR_SEPARATOR . APP_NAME . DIR_SEPARATOR . 'Model' . DIR_SEPARATOR );
         spl_autoload_extensions ( '.php' );
         spl_autoload ( $class );
+    }
+
+    public function config() {
+        $config = APP_PATH. DIR_SEPARATOR . APP_NAME . DIR_SEPARATOR . 'Config' . DIR_SEPARATOR . "config.php";
+        require $config;
     }
 
 }
