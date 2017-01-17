@@ -12,7 +12,15 @@ class DB
     protected $_result;
     private $filter = '';
 
-// 连接数据库
+    /**
+     * 连接数据库
+     * @param $db_type
+     * @param $host
+     * @param $port
+     * @param $user
+     * @param $pass
+     * @param $dbname
+     */
     public function connect($db_type, $host, $port, $user, $pass, $dbname)
     {
         try {
@@ -24,7 +32,11 @@ class DB
         }
     }
 
-// 查询条件
+    /**
+     * 拼接where 条件
+     * @param array $where
+     * @return $this
+     */
     public function where($where = array())
     {
         if (isset($where)) {
@@ -35,7 +47,11 @@ class DB
         return $this;
     }
 
-// 排序条件
+    /**
+     * 排序条件
+     * @param array $order
+     * @return $this
+     */
     public function order($order = array())
     {
         if (isset($order)) {
@@ -46,7 +62,10 @@ class DB
         return $this;
     }
 
-// 查询所有
+    /**
+     * 查询所有
+     * @return mixed
+     */
     public function selectAll()
     {
         $sql = sprintf("select * from `%s` %s", $this->_table, $this->filter);
@@ -56,7 +75,11 @@ class DB
         return $sth->fetchAll();
     }
 
-// 根据条件 (id) 查询
+    /**
+     * 根据条件 (id) 查询
+     * @param $id
+     * @return mixed
+     */
     public function select($id)
     {
         $sql = sprintf("select * from `%s` where `id` = '%s'", $this->_table, $id);
@@ -66,7 +89,11 @@ class DB
         return $sth->fetch();
     }
 
-// 根据条件 (id) 删除
+    /**
+     * 根据条件 (id) 删除
+     * @param $id
+     * @return mixed
+     */
     public function delete($id)
     {
         $sql = sprintf("delete from `%s` where `id` = '%s'", $this->_table, $id);
@@ -76,7 +103,11 @@ class DB
         return $sth->rowCount();
     }
 
-// 自定义SQL查询，返回影响的行数
+    /**
+     * 自定义SQL查询，返回影响的行数
+     * @param $sql
+     * @return mixed
+     */
     public function query($sql)
     {
         $sth = $this->_dbHandle->prepare($sql);
@@ -85,7 +116,11 @@ class DB
         return $sth->rowCount();
     }
 
-// 新增数据
+    /**
+     * 新增数据
+     * @param $data
+     * @return mixed
+     */
     public function add($data)
     {
         $sql = sprintf("insert into `%s` %s", $this->_table, $this->formatInsert($data));
@@ -93,7 +128,12 @@ class DB
         return $this->query($sql);
     }
 
-// 修改数据
+    /**
+     * 修改数据
+     * @param $id
+     * @param $data
+     * @return mixed
+     */
     public function update($id, $data)
     {
         $sql = sprintf("update `%s` set %s where `id` = '%s'", $this->_table, $this->formatUpdate($data), $id);
@@ -101,7 +141,11 @@ class DB
         return $this->query($sql);
     }
 
-// 将数组转换成插入格式的sql语句
+    /**
+     * 将数组转换成插入格式的sql语句
+     * @param $data
+     * @return string
+     */
     private function formatInsert($data)
     {
         $fields = array();
@@ -117,7 +161,11 @@ class DB
         return sprintf("(%s) values (%s)", $field, $value);
     }
 
-// 将数组转换成更新格式的sql语句
+    /**
+     * 将数组转换成更新格式的sql语句
+     * @param $data
+     * @return string
+     */
     private function formatUpdate($data)
     {
         $fields = array();
