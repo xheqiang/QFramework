@@ -12,28 +12,69 @@ class IndexController extends Controller
     public function indexAction($param = "")
     {
         /**
-         * save 增加order limit方法
+         * test create 方法
+         * 新增data()方法  类生成sql统一处理
          */
         /*$user = new User();
-        $whereArr["sex"] = 2;
-        $orderArr["id"] = "desc";
-        $limitArr["end"] = 5;
-        $data["sex"] = 1;
-        $data["email"] = "adminaaa@vega.com";
-        if($user->where($whereArr)->order($orderArr)->limit($limitArr)->save($data)){
+        $data["name"] = "vega_xia";
+        $data["sex"] = "1";
+        $data["email"] = "vega.xia@vegagame.com";
+        if($user->data($data)->create()){
+            echo "create success";
+        }*/
+
+        /**
+         * test save 方法
+         * 新增data()方法 类生成sql统一处理
+         */
+        /*$user = new User();
+        $whereStr = " id = 1";
+        $data["name"] = "vega_xia";
+        $data["sex"] = "1";
+        $data["email"] = "vega.xia@vegagame.com";
+        if($user->where($whereStr)->data($data)->save()){
             echo "save success";
         }*/
 
         /**
-         * find 增加order limit方法
+         * test findFirst 方法
+         * 类生成sql统一处理
          */
         /*$user = new User();
-        $cloumnArr = array("name","email");
-        $whereArr["sex"] = 1;
-        $orderArr["id"] = "desc";
-        $limitArr["end"] = 2;
-        $userInfo = $user->cloumn($cloumnArr)->where($whereArr)->order($orderArr)->limit($limitArr)->find();
-        print_r($userInfo);*/
+        $whereStr = " id = 1";
+        $userInfo = $user->where($whereStr)->findFirst();
+        print_r($userInfo);
+        exit;*/
+
+        /**
+         * test find 方法
+         * 类生成sql统一处理
+         */
+        /*$user = new User();
+        $whereStr = " sex = 1";
+        $userInfo = $user->where($whereStr)->find();
+        print_r($userInfo);
+        exit;*/
+
+        /**
+         * test delete 方法
+         * 类生成sql统一处理
+         */
+        /*$user = new User();
+        $whereStr = " id = 5";
+        if($user->where($whereStr)->delete()){
+            echo "delete success";
+        }*/
+
+        /**
+         * test 原生sql 方法
+         * 修改execute 方法
+         */
+         $user = new User();
+        $sql = "select * from user where name='zhangsan' ";
+        $userHandle = $user->execute($sql);
+        print_r($userHandle->fetchAll());
+
     }
 
 }
