@@ -10,9 +10,10 @@ class DB
 {
     protected $_dbHandle;    //数据库连接句柄
     protected $_table = "";  //表名称
+    private $_cloumn = "";  //查询的数据库列
     private $_where = "";   //拼接where 条件
     private $_sql = "";     //拼接的sql语句
-    private $_cloumn = "";  //查询的数据库列
+    private $_order = "";   //拼接的排序语句
 
     /**
      * 连接数据库
@@ -55,7 +56,10 @@ class DB
     public function save($data)
     {
         $whereStr = !empty($this->_where) ? $this->_where : " 1=1 ";
-        $this->_sql = sprintf("update `%s` set %s where %s", $this->_table, $this->formatSaveData($data), $whereStr);
+        $orderStr = !empty($this->_order) ? "order by " . $this->_order : "";
+        $limitStr = !empty($this->_limit) ? "limit " . $this->_limit : "";
+        $this->_sql = sprintf("update `%s` set %s where %s %s %s", $this->_table, $this->formatSaveData($data), $whereStr, $orderStr, $limitStr);
+        echo $this->_sql."<br>";
 
         $sth = $this->execute();
         return $sth->rowCount();
@@ -69,7 +73,8 @@ class DB
     {
         $cloumnStr = !empty($this->_cloumn) ? $this->_cloumn : " * ";
         $whereStr = !empty($this->_where) ? $this->_where : " 1=1 ";
-        $this->_sql = sprintf("select %s from `%s` where %s", $cloumnStr,  $this->_table, $whereStr);
+        $orderStr = !empty($this->_order) ? "order by " . $this->_order : "";
+        $this->_sql = sprintf("select %s from `%s` where %s %s", $cloumnStr,  $this->_table, $whereStr, $orderStr);
 
         $sth = $this->execute();
         return $sth->fetch();
@@ -84,7 +89,9 @@ class DB
     {
         $cloumnStr = !empty($this->_cloumn) ? $this->_cloumn : " * ";
         $whereStr = !empty($this->_where) ? $this->_where : " 1=1 ";
-        $this->_sql = sprintf("select %s from `%s` where %s", $cloumnStr,  $this->_table, $whereStr);
+        $orderStr = !empty($this->_order) ? "order by " . $this->_order : "";
+        $limitStr = !empty($this->_limit) ? "limit " . $this->_limit : "";
+        $this->_sql = sprintf("select %s from `%s` where %s %s %s", $cloumnStr,  $this->_table, $whereStr, $orderStr, $limitStr);
 
         $sth = $this->execute();
         return $sth->fetchAll();
@@ -97,7 +104,9 @@ class DB
     public function delete()
     {
         $whereStr = !empty($this->_where) ? $this->_where : " 1=1 ";
-        $this->_sql = sprintf("delete from `%s` where %s", $this->_table, $whereStr);
+        $orderStr = !empty($this->_order) ? "order by " . $this->_order : "";
+        $limitStr = !empty($this->_limit) ? "limit " . $this->_limit : "";
+        $this->_sql = sprintf("delete from `%s` where %s %s %s", $this->_table, $whereStr, $orderStr, $limitStr);
 
         $sth = $this->execute();
         return $sth->rowCount();
@@ -130,7 +139,7 @@ class DB
         if(is_array($where)){
             $whereArr = array();
             foreach ($where as $key => $value) {
-                $whereArr = sprintf("`%s` = '%s'", $key, $value);
+                $whereArr[] = sprintf("`%s` = '%s'", $key, $value);
             }
             $this->_where .= implode(' and ', $whereArr);
         }else{
@@ -140,21 +149,37 @@ class DB
     }
 
     /**
-     * 排序条件
+     * @param null $orderStr
      * @return $this
      */
-    public function order()
+    public function order($order = null)
     {
-
+        if(is_array($order)){
+            $orderArr = array();
+            foreach ($order as $key => $value) {
+                $orderArr[] = sprintf("`%s` %s", $key, $value);
+            }
+            $this->_order .= implode(',', $orderArr);
+        }else{
+            $this->_order .= $order;
+        }
+        return $this;
     }
 
     /**
      * 显示显示条件
      * @return $this
      */
-    public function limit()
+    public function limit($limit = null)
     {
-
+        if(is_array($limit)){
+            $start = !empty($limit["start"]) ? $limit["start"]."," : "";
+            $end = $limit["end"];
+            $this->_limit =!empty($end) ? $start . $end : "";
+        }else{
+            $this->_limit = $limit;
+        }
+        return $this;
     }
 
     /**
