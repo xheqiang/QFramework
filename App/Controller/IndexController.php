@@ -40,11 +40,11 @@ class IndexController extends Controller
          * test findFirst 方法
          * 类生成sql统一处理
          */
-        /*$user = new User();
+        $user = new User();
         $whereStr = " id = 1";
         $userInfo = $user->where($whereStr)->findFirst();
         print_r($userInfo);
-        exit;*/
+        exit;
 
         /**
          * test find 方法
@@ -70,10 +70,11 @@ class IndexController extends Controller
          * test 原生sql 方法
          * 修改execute 方法
          */
-         $user = new User();
+        /*$user = new User();
         $sql = "select * from user where name='zhangsan' ";
         $userHandle = $user->execute($sql);
-        print_r($userHandle->fetchAll());
+        print_r($userHandle->fetchAll());*/
+
 
     }
 

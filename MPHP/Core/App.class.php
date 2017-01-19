@@ -51,8 +51,7 @@ class App
 
             self::$_params = $routeParams;
 
-        } catch(Exception $e)
-        {
+        } catch(Exception $e) {
             echo $e->getMessage();
             exit;
         }
@@ -70,8 +69,6 @@ class App
         $dispatch = new $controller($controllerName, $actionName);
         //init中已经判断控制器和动作存在，这里调用并传入url参数
         $dispatch->$action($param);
-        //TODO 该方法在这里实现有问题，在Action中无法接受到参数，以后检查
-        //call_user_func_array(array($dispatch, $action), $param);
     }
 
     public static function getController()

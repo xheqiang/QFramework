@@ -5,6 +5,12 @@
  * Date: 17/1/14
  * Time: 下午3:40
  */
+//....增加目录时，直接加入即可，在下面spl中增加对应的方法
+define('CORE', "core");     //定义框架核心库目录名称
+define('CONTROLLER', "Controller");     //定义项目Controller目录名称
+define('MODEL', "Model");     //定义项目Model目录名称
+define('CONFIG', "Config");     //定义项目Config目录名称
+
 define('DIR_SEPARATOR', DIRECTORY_SEPARATOR);   //取系统分割符，兼容win&&linux
 define('FRAME_INDEX_PATH', __DIR__);
 
@@ -15,41 +21,50 @@ define('FRAME_INDEX_PATH', __DIR__);
 class Mphp {
     public static $loader;
 
-    public static function init() {
-        if (self::$loader == NULL)
+    public static function init()
+    {
+        if (self::$loader == NULL){
             self::$loader = new self ();
+        }
 
         return self::$loader;
     }
 
-    public function __construct() {
+    public function __construct()
+    {
+        $this->config();    //TODO:: 暂时没有找到别的好的方法,之后优化 require 无法通过sql实现
         spl_autoload_register ( array ($this, 'core' ) );
         spl_autoload_register ( array ($this, 'controller' ) );
         spl_autoload_register ( array ($this, 'model' ) );
-        self::config();    //TODO 引入配置文件，暂时通过该方法实现，之后优化
     }
 
-    public function core($class) {
-        set_include_path ( get_include_path () . PATH_SEPARATOR . FRAME_INDEX_PATH . DIR_SEPARATOR . 'Core' . DIR_SEPARATOR );
+    public function core($class)
+    {
+        set_include_path ( get_include_path () . PATH_SEPARATOR . FRAME_INDEX_PATH . DIR_SEPARATOR . CORE . DIR_SEPARATOR );
         spl_autoload_extensions ( '.class.php' );
         spl_autoload ( $class );
     }
 
-    public function controller($class) {
-        set_include_path ( get_include_path () . PATH_SEPARATOR . APP_PATH. DIR_SEPARATOR . APP_NAME . DIR_SEPARATOR . 'Controller' . DIR_SEPARATOR );
+    public function controller($class)
+    {
+        set_include_path ( get_include_path () . PATH_SEPARATOR . APP_PATH. DIR_SEPARATOR . APP_NAME . DIR_SEPARATOR . CONTROLLER . DIR_SEPARATOR );
         spl_autoload_extensions ( 'Controller.php' );
         spl_autoload ( $class );
     }
 
-    public function model($class) {
-        set_include_path ( get_include_path () . PATH_SEPARATOR . APP_PATH. DIR_SEPARATOR . APP_NAME . DIR_SEPARATOR . 'Model' . DIR_SEPARATOR );
+    public function model($class)
+    {
+        set_include_path ( get_include_path () . PATH_SEPARATOR . APP_PATH. DIR_SEPARATOR . APP_NAME . DIR_SEPARATOR . MODEL . DIR_SEPARATOR );
         spl_autoload_extensions ( '.php' );
         spl_autoload ( $class );
     }
 
-    public function config() {
-        $config = APP_PATH. DIR_SEPARATOR . APP_NAME . DIR_SEPARATOR . 'Config' . DIR_SEPARATOR . "config.php";
-        require $config;
+    public function config()
+    {
+        $config = include_once( APP_PATH. DIR_SEPARATOR . APP_NAME . DIR_SEPARATOR . CONFIG . DIR_SEPARATOR . "config.php");
+        foreach($config as $key => $val){
+            define($key, $val);
+        }
     }
 
 }

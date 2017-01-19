@@ -53,8 +53,8 @@ class DB
     {
         $this->data($data);
         $this->buildsql(self::DB_MOTHOD_CREATE);
-        $sth = $this->execute();
-        return $sth->rowCount();
+        $dispatch = $this->execute();
+        return $dispatch->rowCount();
     }
 
     /**
@@ -69,8 +69,8 @@ class DB
     {
         $this->data($data);
         $this->buildsql(self::DB_MOTHOD_SAVE);
-        $sth = $this->execute();
-        return $sth->rowCount();
+        $dispatch = $this->execute();
+        return $dispatch->rowCount();
     }
 
     /**
@@ -83,8 +83,8 @@ class DB
     public function findFirst()
     {
         $this->buildsql(self::DB_MOTHOD_FINDFIRST);
-        $sth = $this->execute();
-        return $sth->fetch();
+        $dispatch = $this->execute();
+        return $dispatch->fetch();
     }
 
     /**
@@ -97,8 +97,8 @@ class DB
     public function find()
     {
         $this->buildsql(self::DB_MOTHOD_FIND);
-        $sth = $this->execute();
-        return $sth->fetchAll();
+        $dispatch = $this->execute();
+        return $dispatch->fetchAll();
     }
 
     /**
@@ -109,8 +109,8 @@ class DB
     public function delete()
     {
         $this->buildsql(self::DB_MOTHOD_DELETE);
-        $sth = $this->execute();
-        return $sth->rowCount();
+        $dispatch = $this->execute();
+        return $dispatch->rowCount();
     }
 
     /**
@@ -211,10 +211,10 @@ class DB
     public function execute($sql = null)
     {
         $this->_sql = !empty($sql) ? $sql : $this->_sql;    //exexute 中的sql会覆盖生成的sql,该方法便于执行原生的sql方法
-        $sth = $this->_dbHandle->prepare($this->_sql);
-        $sth->execute();
+        $dispatch = $this->_dbHandle->prepare($this->_sql);
+        $dispatch->execute();
 
-        return $sth;
+        return $dispatch;
     }
 
     /**
