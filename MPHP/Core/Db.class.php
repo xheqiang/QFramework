@@ -8,9 +8,11 @@
  */
 class DB
 {
-    protected $_dbHandle;
-    protected $_result;
-    private $filter = '';
+    protected $_dbHandle;    //数据库连接句柄
+    protected $_table = "";  //表名称
+    private $_where = "";   //拼接where 条件
+    private $_sql = "";     //拼接的sql语句
+    private $_cloumn = "";  //查询的数据库列
 
     /**
      * 连接数据库
@@ -33,112 +35,143 @@ class DB
     }
 
     /**
+     * 新增数据
+     * @param $data
+     * @return mixed
+     */
+    public function create($data)
+    {
+        $this->_sql = sprintf("insert into `%s` %s ", $this->_table, $this->formatCreate($data));
+
+        $sth = $this->execute();
+        return $sth->rowCount();
+    }
+
+    /**
+     * 修改数据
+     * @param $data
+     * @return mixed
+     */
+    public function save($data)
+    {
+        $whereStr = !empty($this->_where) ? $this->_where : " 1=1 ";
+        $this->_sql = sprintf("update `%s` set %s where %s", $this->_table, $this->formatSaveData($data), $whereStr);
+
+        $sth = $this->execute();
+        return $sth->rowCount();
+    }
+
+    /**
+     * 查询单条
+     * @return mixed
+     */
+    public function findFirst()
+    {
+        $cloumnStr = !empty($this->_cloumn) ? $this->_cloumn : " * ";
+        $whereStr = !empty($this->_where) ? $this->_where : " 1=1 ";
+        $this->_sql = sprintf("select %s from `%s` where %s", $cloumnStr,  $this->_table, $whereStr);
+
+        $sth = $this->execute();
+        return $sth->fetch();
+
+    }
+
+    /**
+     * 查询单条
+     * @return mixed
+     */
+    public function find()
+    {
+        $cloumnStr = !empty($this->_cloumn) ? $this->_cloumn : " * ";
+        $whereStr = !empty($this->_where) ? $this->_where : " 1=1 ";
+        $this->_sql = sprintf("select %s from `%s` where %s", $cloumnStr,  $this->_table, $whereStr);
+
+        $sth = $this->execute();
+        return $sth->fetchAll();
+    }
+    
+    /**
+     * 根据条件删除
+     * @return mixed
+     */
+    public function delete()
+    {
+        $whereStr = !empty($this->_where) ? $this->_where : " 1=1 ";
+        $this->_sql = sprintf("delete from `%s` where %s", $this->_table, $whereStr);
+
+        $sth = $this->execute();
+        return $sth->rowCount();
+    }
+
+
+    public function cloumn($cloumn = null)
+    {
+        $this->_cloumn = !empty($cloumn) ? " " : " * ";
+        if(is_array($cloumn)){
+            $cloumnArr = array();
+            foreach ($cloumn as $key => $value) {
+                $cloumnArr[] = $value;
+            }
+            $this->_cloumn .= implode(',', $cloumnArr);
+        }else{
+            $this->_cloumn .= $cloumn;
+        }
+        return $this;
+    }
+
+    /**
      * 拼接where 条件
      * @param array $where
      * @return $this
      */
-    public function where($where = array())
+    public function where($where = null)
     {
-        if (isset($where)) {
-            $this->filter .= ' WHERE ';
-            $this->filter .= implode(' ', $where);
+        $this->_where = !empty($where) ? " " : " 1=1 ";
+        if(is_array($where)){
+            $whereArr = array();
+            foreach ($where as $key => $value) {
+                $whereArr = sprintf("`%s` = '%s'", $key, $value);
+            }
+            $this->_where .= implode(' and ', $whereArr);
+        }else{
+            $this->_where .= $where;
         }
-
         return $this;
     }
 
     /**
      * 排序条件
-     * @param array $order
      * @return $this
      */
-    public function order($order = array())
+    public function order()
     {
-        if (isset($order)) {
-            $this->filter .= ' ORDER BY ';
-            $this->filter .= implode(',', $order);
-        }
 
-        return $this;
     }
 
     /**
-     * 查询所有
+     * 显示显示条件
+     * @return $this
+     */
+    public function limit()
+    {
+
+    }
+
+    /**
+     * Sql语句执行，返回影响的行数
      * @return mixed
      */
-    public function selectAll()
+    public function execute()
     {
-        $sql = sprintf("select * from `%s` %s", $this->_table, $this->filter);
-        $sth = $this->_dbHandle->prepare($sql);
+        $sth = $this->_dbHandle->prepare($this->_sql);
         $sth->execute();
 
-        return $sth->fetchAll();
+        return $sth;
     }
 
-    /**
-     * 根据条件 (id) 查询
-     * @param $id
-     * @return mixed
-     */
-    public function select($id)
-    {
-        $sql = sprintf("select * from `%s` where `id` = '%s'", $this->_table, $id);
-        $sth = $this->_dbHandle->prepare($sql);
-        $sth->execute();
 
-        return $sth->fetch();
-    }
-
-    /**
-     * 根据条件 (id) 删除
-     * @param $id
-     * @return mixed
-     */
-    public function delete($id)
-    {
-        $sql = sprintf("delete from `%s` where `id` = '%s'", $this->_table, $id);
-        $sth = $this->_dbHandle->prepare($sql);
-        $sth->execute();
-
-        return $sth->rowCount();
-    }
-
-    /**
-     * 自定义SQL查询，返回影响的行数
-     * @param $sql
-     * @return mixed
-     */
-    public function query($sql)
-    {
-        $sth = $this->_dbHandle->prepare($sql);
-        $sth->execute();
-
-        return $sth->rowCount();
-    }
-
-    /**
-     * 新增数据
-     * @param $data
-     * @return mixed
-     */
-    public function add($data)
-    {
-        $sql = sprintf("insert into `%s` %s", $this->_table, $this->formatInsert($data));
-
-        return $this->query($sql);
-    }
-
-    /**
-     * 修改数据
-     * @param $id
-     * @param $data
-     * @return mixed
-     */
-    public function update($id, $data)
-    {
-        $sql = sprintf("update `%s` set %s where `id` = '%s'", $this->_table, $this->formatUpdate($data), $id);
-
-        return $this->query($sql);
+    public function getLastSql(){
+        return $this->_sql;
     }
 
     /**
@@ -146,7 +179,7 @@ class DB
      * @param $data
      * @return string
      */
-    private function formatInsert($data)
+    private function formatCreate($data)
     {
         $fields = array();
         $values = array();
@@ -166,7 +199,7 @@ class DB
      * @param $data
      * @return string
      */
-    private function formatUpdate($data)
+    private function formatSaveData($data)
     {
         $fields = array();
         foreach ($data as $key => $value) {
@@ -175,4 +208,5 @@ class DB
 
         return implode(',', $fields);
     }
+
 }
