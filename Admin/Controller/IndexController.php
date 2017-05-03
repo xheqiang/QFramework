@@ -11,17 +11,6 @@ class IndexController extends Controller
 
     public function indexAction($param = "")
     {
-        $data["id"] = "123";
-        $this->assign("data", $data);
-        $this->display();
-        /*连接redis
-        if(缓存为空){
-
-        }else{
-
-        }*/
-
-
         /**
          * test create 方法
          * 新增data()方法  类生成sql统一处理
