@@ -18,7 +18,7 @@ define('FRAME_INDEX_PATH', __DIR__);
 /**
  * 方法2：spl方法加载框架
  */
-class Mphp {
+class Qphp {
     public static $loader;
 
     public static function init()
@@ -32,7 +32,7 @@ class Mphp {
 
     public function __construct()
     {
-        $this->config();    //TODO:: 暂时没有找到别的好的方法,之后优化 require 无法通过sql实现
+        $this->config();    //TODO:: 暂时没有找到别的好的方法,之后优化 require 无法通过spl实现
         spl_autoload_register ( array ($this, 'core' ) );
         spl_autoload_register ( array ($this, 'controller' ) );
         spl_autoload_register ( array ($this, 'model' ) );
@@ -61,15 +61,25 @@ class Mphp {
 
     public function config()
     {
-        $config = include_once( APP_PATH. DIR_SEPARATOR . APP_NAME . DIR_SEPARATOR . CONFIG . DIR_SEPARATOR . "config.php");
-        foreach($config as $key => $val){
-            define($key, $val);
+        $configPath = APP_PATH. DIR_SEPARATOR . APP_NAME . DIR_SEPARATOR . CONFIG . DIR_SEPARATOR;
+        $dp = dir($configPath);
+        while($file = $dp->read()){
+            if($file !="." && $file !="..") {
+                if (is_file($configPath . $file)) { //当前为文件
+                    if(substr($file, -4) == ".php"){
+                        $configFile = $configPath . $file;
+                        $config = include_once("$configFile");
+                        foreach($config as $key => $val){
+                            define($key, $val);
+                        }
+                    }
+                }
+            }
         }
     }
-
 }
 
-Mphp::init();
+Qphp::init();
 
 
 /**
