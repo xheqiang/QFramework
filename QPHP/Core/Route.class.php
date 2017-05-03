@@ -33,7 +33,7 @@ class Route
     public function route()
     {
         $url = isset($_GET['_url']) ? $_GET['_url'] : $_SERVER["REQUEST_URI"]; //兼容默认入口文件和用户自定义入口文件
-        $url = substr($url,1); //去除参数中第一个"/"
+        $url = substr($url,0); //去除参数中第一个"/"
 
         if ($url) {
             // 使用"/"分割字符串，并保存在数组中
