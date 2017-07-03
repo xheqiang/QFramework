@@ -3,10 +3,16 @@
 
 </head>
 <body>
-    <h1>hello World!!!</h1>
-    <?php
-        print_r($list["id"]);
-        ?>
+<center>
+    <h1>测试表单提交</h1>
+    <form name="form1" action="admin.php/index/submit" method="post">
+        用户名：<input type="text" name="name" value=""><br>
+        电话：<input type="text" name="tel" value=""><br>
+        邮箱：<input type="text" name="email" value=""><br>
+        <input type="submit" name="submit" value="提交">
+    </form>
+
+</center>
 </body>
 
 </html>

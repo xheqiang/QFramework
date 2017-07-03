@@ -40,7 +40,7 @@ class Route
             $urlArray = explode('/', $url);
             // 删除空的数组元素
             $urlArray = array_filter($urlArray);
-            //$urlArray = array_values($urlArray); //重置数组键值
+            $urlArray = array_values($urlArray); //重置数组键值
 
 
             //检查第一个参数是否包含.php,如果包含直接去除

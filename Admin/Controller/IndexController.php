@@ -11,71 +11,20 @@ class IndexController extends Controller
 
     public function indexAction($param = "")
     {
-        /**
-         * test create 方法
-         * 新增data()方法  类生成sql统一处理
-         */
-        /*$user = new User();
-        $data["name"] = "vega_xia";
-        $data["sex"] = "1";
-        $data["email"] = "vega.xia@vegagame.com";
-        if($user->data($data)->create()){
-            echo "create success";
-        }*/
+        $this->display();
+    }
 
-        /**
-         * test save 方法
-         * 新增data()方法 类生成sql统一处理
-         */
-        /*$user = new User();
-        $whereStr = " id = 1";
-        $data["name"] = "vega_xia";
-        $data["sex"] = "1";
-        $data["email"] = "vega.xia@vegagame.com";
-        if($user->where($whereStr)->data($data)->save()){
-            echo "save success";
-        }*/
-
-        /**
-         * test findFirst 方法
-         * 类生成sql统一处理
-         */
-        /*$user = new User();
-        $whereStr = " id = 1";
-        $userInfo = $user->where($whereStr)->findFirst();
-        print_r($userInfo);
-        exit;*/
-
-        /**
-         * test find 方法
-         * 类生成sql统一处理
-         */
-        /*$user = new User();
-        $whereStr = " sex = 1";
-        $userInfo = $user->where($whereStr)->find();
-        print_r($userInfo);
-        exit;*/
-
-        /**
-         * test delete 方法
-         * 类生成sql统一处理
-         */
-        /*$user = new User();
-        $whereStr = " id = 5";
-        if($user->where($whereStr)->delete()){
-            echo "delete success";
-        }*/
-
-        /**
-         * test 原生sql 方法
-         * 修改execute 方法
-         */
-        /*$user = new User();
-        $sql = "select * from user where name='zhangsan' ";
-        $userHandle = $user->execute($sql);
-        print_r($userHandle->fetchAll());*/
-
-
+    public function submitAction()
+    {
+        $oriContent = file_get_contents('php://input');
+        $elements = split('&', $oriContent);
+        $valueMap = array();
+        foreach ($elements as $element)
+        {
+            $single = split('=', $element);
+            $valueMap[$single[0]] = $single[1];
+        }
+        print_r($valueMap);
     }
 
 }
